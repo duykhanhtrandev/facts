@@ -50,7 +50,27 @@ const factsList = document.querySelector('.facts-list');
 
 // Create DOM elements: Render facts in list
 factsList.innerHTML = '';
-createFactsList(initialFacts);
+
+// Load data from Supabase
+loadFacts();
+
+async function loadFacts() {
+  const res = await fetch(
+    'https://zhupdfipljgnjjmhamvn.supabase.co/rest/v1/facts',
+    {
+      headers: {
+        apikey:
+          'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InpodXBkZmlwbGpnbmpqbWhhbXZuIiwicm9sZSI6ImFub24iLCJpYXQiOjE2ODAwMDM0MDQsImV4cCI6MTk5NTU3OTQwNH0.US4tsVK-_gDCAOuGsJH8JB5DuWLQSWS6jGdeVmNxf78',
+        authorization:
+          'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InpodXBkZmlwbGpnbmpqbWhhbXZuIiwicm9sZSI6ImFub24iLCJpYXQiOjE2ODAwMDM0MDQsImV4cCI6MTk5NTU3OTQwNH0.US4tsVK-_gDCAOuGsJH8JB5DuWLQSWS6jGdeVmNxf78',
+      },
+    }
+  );
+  const data = await res.json();
+  console.log(data);
+  // const filteredData = data.filter((fact) => fact.category === 'science');
+  createFactsList(data);
+}
 
 function createFactsList(dataArray) {
   // factsList.insertAdjacentHTML('afterbegin', '<li>Michel</li>');
@@ -63,7 +83,9 @@ function createFactsList(dataArray) {
             ${fact.text}
             <a target="_blank" class="source" href="${fact.source}">(Source)</a>
           </p>
-          <span class="tag" style="background-color: #3b82f6">${fact.category}</span>
+          <span class="tag" style="background-color: ${
+            CATEGORIES.find((cat) => cat.name === fact.category).color
+          }">${fact.category}</span>
           <div class="vote-buttons">
             <button>👍 ${fact.votesInteresting}</button>
             <button>🤯 ${fact.votesMindblowing}</button>
@@ -72,8 +94,6 @@ function createFactsList(dataArray) {
         </li>
       `
   );
-
-  console.log(htmlArray);
   const html = htmlArray.join('');
   factsList.insertAdjacentHTML('afterbegin', html);
 }
@@ -85,6 +105,6 @@ btn.addEventListener('click', () => {
     btn.textContent = 'Close';
   } else {
     form.classList.add('hidden');
-    btn.textContent = 'share a fact';
+    btn.textContent = 'Share a fact';
   }
 });
