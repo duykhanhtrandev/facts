@@ -24,3 +24,7 @@ yarn-error.log*
 
 # supabase
 /supabase.txt
+
+/config.env
+
+/version1
